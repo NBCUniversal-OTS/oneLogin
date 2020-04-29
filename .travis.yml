@@ -1,0 +1,54 @@
+sudo: false
+
+language: php
+
+if: branch =~ ^.*(?<!-built)$
+
+branches:
+  only:
+  - master
+  - develop
+  - "/^travis-.*$/"
+
+git:
+  depth: 1
+  submodules: false
+
+matrix:
+  fast_finish: true
+  include:
+    - php: '7.3'
+      env: BUILD=1
+
+    - if: type = pull_request
+      php: '7.3'
+      env: WP_VERSION=trunk
+
+    - if: type = pull_request
+      php: '7.3'
+      env: WP_VERSION=latest PHP_LINT=1 WP_PHPCS=1 NPM_BUILD=1
+
+    - if: type = pull_request
+      php: '7.3'
+      env: WP_VERSION=latest WP_TRAVIS_OBJECT_CACHE=1
+
+    - if: type = pull_request
+      php: '7.3'
+      env: WP_VERSION=latest PHP_LINT=1
+
+    - if: type = pull_request
+      php: nightly
+      env: WP_VERSION=latest PHP_LINT=1
+
+  allow_failures:
+    - php: nightly
+
+before_script:
+- |
+  ## Add our build script here..
+  echo hello, before_script!
+
+after_script:
+- |
+  ## After build completes
+  echo hello, after_script!
